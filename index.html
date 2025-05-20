@@ -193,7 +193,10 @@
     </div>
     
     <script>
-        // Tasas iniciales
+        // Clave para el localStorage
+        const STORAGE_KEY = 'dolarRatesAppData';
+        
+        // Tasas iniciales (se cargarán del localStorage)
         let rates = {
             parallel: 36.50,
             bcv: 35.20,
@@ -220,6 +223,30 @@
         const bcvEditEl = document.getElementById('bcv-edit');
         const parallelInputEl = document.getElementById('parallel-input');
         const bcvInputEl = document.getElementById('bcv-input');
+        
+        // Función para guardar datos en localStorage
+        function saveDataToStorage() {
+            const dataToSave = {
+                rates: rates,
+                lastUpdated: new Date()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        }
+        
+        // Función para cargar datos desde localStorage
+        function loadDataFromStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                
+                // Convertir las fechas string de vuelta a objetos Date
+                parsedData.rates.parallelUpdated = new Date(parsedData.rates.parallelUpdated);
+                parsedData.rates.bcvUpdated = new Date(parsedData.rates.bcvUpdated);
+                
+                return parsedData.rates;
+            }
+            return null;
+        }
         
         // Función para formatear fecha
         function formatDate(date) {
@@ -275,6 +302,7 @@
             rates.bcvUpdated = new Date();
             
             updateRatesUI();
+            saveDataToStorage();
             toggleEditMode();
         }
         
@@ -316,7 +344,15 @@
         calculateBtn.addEventListener('click', calculateConversion);
         
         // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', updateRatesUI);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intentar cargar datos guardados
+            const savedRates = loadDataFromStorage();
+            if (savedRates) {
+                rates = savedRates;
+            }
+            
+            updateRatesUI();
+        });
     </script>
 </body>
 </html>
