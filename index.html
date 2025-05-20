@@ -3,40 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Inventario</title>
+    <title>Conversor Dólar Paralelo/BCV</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .rates-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .rate-box {
+            width: 48%;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .parallel {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+        }
+        
+        .bcv {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .rate-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .rate-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fffde7;
+            border: 1px solid #fff9c4;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .date-info {
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        
+        .edit-btn {
+            background-color: #f39c12;
+            margin-top: 10px;
+        }
+        
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        .save-btn {
+            background-color: #27ae60;
+            margin-top: 10px;
+        }
+        
+        .save-btn:hover {
+            background-color: #219653;
+        }
+        
+        .edit-mode {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <img src="file:///C:/Users/nehke/Desktop/Archivos/appnew.png" alt="logo de la app" class="logo"
-        </header>
-        <form id="inventoryForm">
-            <input type="text" id="productName" placeholder="Nombre del servicio" required>
-            <input type="text" id="providerName" placeholder="Nombre del proveedor" required>
-            <input type="number" id="purchasePrice" placeholder="Precio de compra" required step="0.01">
-            <input type="number" id="salePrice" placeholder="Precio de venta" required step="0.01">
-            <button type="submit">Agregar servicio</button>
-        </form>
-        <button id="historyButton" class="history-btn">Historial de Servicios</button>
-        <button id="backButton" style="display:none;">Regresar</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Servicio</th>
-                    <th>Proveedor</th>
-                    <th>Precio de Compra</th>
-                    <th>Precio de Venta</th>
-                    <th>Estatus</th>
-                    <th>Fecha y Hora</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="inventoryList"></tbody>
-        </table>
-        <h2 id="totalInvestment">Inversión Total: $0.00</h2>
-        <h2 id="totalProfit">Ganancias Totales: $0.00</h2>
+    <h1>Conversor Dólar Paralelo/BCV</h1>
+    
+    <div class="card">
+        <div class="rates-container">
+            <div class="rate-box parallel">
+                <div class="rate-title">Dólar Paralelo</div>
+                <div class="rate-value" id="parallel-rate">0.00</div>
+                <div class="date-info" id="parallel-date">Actualizado: --/--/----</div>
+                
+                <div class="edit-mode" id="parallel-edit">
+                    <input type="number" id="parallel-input" step="0.01" min="0" placeholder="Nueva tasa">
+                </div>
+            </div>
+            <div class="rate-box bcv">
+                <div class="rate-title">Dólar BCV</div>
+                <div class="rate-value" id="bcv-rate">0.00</div>
+                <div class="date-info" id="bcv-date">Actualizado: --/--/----</div>
+                
+                <div class="edit-mode" id="bcv-edit">
+                    <input type="number" id="bcv-input" step="0.01" min="0" placeholder="Nueva tasa">
+                </div>
+            </div>
+        </div>
+        
+        <button id="edit-rates" class="edit-btn">Editar Tasas</button>
+        <button id="save-rates" class="save-btn" style="display: none;">Guardar Tasas</button>
     </div>
-    <script src="script.js"></script>
+    
+    <div class="card">
+        <div class="input-group">
+            <label for="amount">Cantidad a convertir:</label>
+            <input type="number" id="amount" placeholder="Ej: 100" step="0.01" min="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="from-currency">De:</label>
+            <select id="from-currency">
+                <option value="parallel">Dólar Paralelo</option>
+                <option value="bcv">Dólar BCV</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="to-currency">A:</label>
+            <select id="to-currency">
+                <option value="bcv">Dólar BCV</option>
+                <option value="parallel">Dólar Paralelo</option>
+            </select>
+        </div>
+        
+        <button id="calculate-btn">Calcular Conversión</button>
+        
+        <div class="result" id="result"></div>
+    </div>
+    
+    <script>
+        // Tasas iniciales
+        let rates = {
+            parallel: 36.50,
+            bcv: 35.20,
+            parallelUpdated: new Date(),
+            bcvUpdated: new Date()
+        };
+        
+        // Modo edición
+        let editMode = false;
+        
+        // Elementos del DOM
+        const parallelRateEl = document.getElementById('parallel-rate');
+        const bcvRateEl = document.getElementById('bcv-rate');
+        const parallelDateEl = document.getElementById('parallel-date');
+        const bcvDateEl = document.getElementById('bcv-date');
+        const editRatesBtn = document.getElementById('edit-rates');
+        const saveRatesBtn = document.getElementById('save-rates');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const amountInput = document.getElementById('amount');
+        const fromCurrencySelect = document.getElementById('from-currency');
+        const toCurrencySelect = document.getElementById('to-currency');
+        const resultEl = document.getElementById('result');
+        const parallelEditEl = document.getElementById('parallel-edit');
+        const bcvEditEl = document.getElementById('bcv-edit');
+        const parallelInputEl = document.getElementById('parallel-input');
+        const bcvInputEl = document.getElementById('bcv-input');
+        
+        // Función para formatear fecha
+        function formatDate(date) {
+            if (!date) return '--/--/----';
+            const d = new Date(date);
+            return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+        }
+        
+        // Función para actualizar las tasas en la UI
+        function updateRatesUI() {
+            parallelRateEl.textContent = rates.parallel.toFixed(2);
+            bcvRateEl.textContent = rates.bcv.toFixed(2);
+            parallelDateEl.textContent = `Actualizado: ${formatDate(rates.parallelUpdated)}`;
+            bcvDateEl.textContent = `Actualizado: ${formatDate(rates.bcvUpdated)}`;
+        }
+        
+        // Función para activar/desactivar modo edición
+        function toggleEditMode() {
+            editMode = !editMode;
+            
+            if (editMode) {
+                // Entrar en modo edición
+                editRatesBtn.style.display = 'none';
+                saveRatesBtn.style.display = 'block';
+                parallelEditEl.style.display = 'block';
+                bcvEditEl.style.display = 'block';
+                
+                // Llenar los inputs con los valores actuales
+                parallelInputEl.value = rates.parallel;
+                bcvInputEl.value = rates.bcv;
+            } else {
+                // Salir del modo edición
+                editRatesBtn.style.display = 'block';
+                saveRatesBtn.style.display = 'none';
+                parallelEditEl.style.display = 'none';
+                bcvEditEl.style.display = 'none';
+            }
+        }
+        
+        // Función para guardar las nuevas tasas
+        function saveRates() {
+            const newParallel = parseFloat(parallelInputEl.value);
+            const newBcv = parseFloat(bcvInputEl.value);
+            
+            if (isNaN(newParallel) || newParallel <= 0 || isNaN(newBcv) || newBcv <= 0) {
+                alert('Por favor ingresa valores válidos mayores a cero');
+                return;
+            }
+            
+            rates.parallel = newParallel;
+            rates.bcv = newBcv;
+            rates.parallelUpdated = new Date();
+            rates.bcvUpdated = new Date();
+            
+            updateRatesUI();
+            toggleEditMode();
+        }
+        
+        // Función para calcular la conversión
+        function calculateConversion() {
+            const amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Por favor ingresa una cantidad válida mayor a cero');
+                return;
+            }
+            
+            const fromCurrency = fromCurrencySelect.value;
+            const toCurrency = toCurrencySelect.value;
+            
+            if (fromCurrency === toCurrency) {
+                alert('No puedes convertir entre la misma moneda');
+                return;
+            }
+            
+            let result;
+            let explanation;
+            
+            if (fromCurrency === 'parallel' && toCurrency === 'bcv') {
+                result = (amount * rates.parallel) / rates.bcv;
+                explanation = `${amount} USD (Paralelo) × ${rates.parallel} = ${(amount * rates.parallel).toFixed(2)} BsS<br>${(amount * rates.parallel).toFixed(2)} BsS ÷ ${rates.bcv} = ${result.toFixed(2)} USD (BCV)`;
+            } else {
+                result = (amount * rates.bcv) / rates.parallel;
+                explanation = `${amount} USD (BCV) × ${rates.bcv} = ${(amount * rates.bcv).toFixed(2)} BsS<br>${(amount * rates.bcv).toFixed(2)} BsS ÷ ${rates.parallel} = ${result.toFixed(2)} USD (Paralelo)`;
+            }
+            
+            resultEl.innerHTML = `<strong>Resultado:</strong> ${result.toFixed(2)} USD<br><small>${explanation}</small>`;
+            resultEl.style.display = 'block';
+        }
+        
+        // Event listeners
+        editRatesBtn.addEventListener('click', toggleEditMode);
+        saveRatesBtn.addEventListener('click', saveRates);
+        calculateBtn.addEventListener('click', calculateConversion);
+        
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', updateRatesUI);
+    </script>
 </body>
 </html>
